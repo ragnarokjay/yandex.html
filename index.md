@@ -14,7 +14,7 @@
 <body>
 <div id="map"></div>
 <script>
-	mapboxgl.accessToken = 'pk.eyJ1IjoibGF1cmVuZ29hdCIsImEiOiJjamt3dThtZWQwMXFoM3FsZWVwMnR6NmhpIn0.UfvJZEpgQ49zHzv7JU2jbQ';
+	mapboxgl.accessToken = 'pk.eyJ1IjoiaW5zcGVyaXR5bWFwcyIsImEiOiJjaWw0Nzdtem4wMDB3dWxseWFvd2dzNzNxIn0.fTsbLTMg3l4Rqv8wR-StGA';
     var map = new mapboxgl.Map({
         container: 'map', // container id
         style: 'mapbox://styles/mapbox/streets-v11', // style URL
