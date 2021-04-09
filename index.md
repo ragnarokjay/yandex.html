@@ -1,78 +1,128 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Geocoding Service</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <style type="text/css">
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
-      }
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <script type='text/javascript'>
+    var map;
 
-      /* Optional: Makes the sample page fill the window. */
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
+    function GetMap()
+    {
+        map = new Microsoft.Maps.Map('#myMap', {});
 
-      #floating-panel {
-        position: absolute;
-        top: 10px;
-        left: 25%;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
-        text-align: center;
-        font-family: "Roboto", "sans-serif";
-        line-height: 30px;
-        padding-left: 10px;
-      }
-    </style>
-    <script>
-      function initMap() {
-        const map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 8,
-          center: { lat: -34.397, lng: 150.644 },
-        });
-        const geocoder = new google.maps.Geocoder();
-        document.getElementById("submit").addEventListener("click", () => {
-          geocodeAddress(geocoder, map);
-        });
-      }
+        if (fullScreenEnabled) {
+            //Use an event to detect when entering/exiting full screen as user may use esc to exit full screen.
+            addFullScreenEvent(function (e) {
+                var mapContainer = document.getElementById('mapContainer');
 
-      function geocodeAddress(geocoder, resultsMap) {
-        const address = document.getElementById("address").value;
-        geocoder.geocode({ address: address }, (results, status) => {
-          if (status === "OK") {
-            resultsMap.setCenter(results[0].geometry.location);
-            new google.maps.Marker({
-              map: resultsMap,
-              position: results[0].geometry.location,
+                if (isFullScreen()) {
+                    //Change the size of the map div so that it fills the screen.
+                    mapContainer.classList.remove('standardMap');
+                    mapContainer.classList.add('fullScreenMap');
+                } else {
+                    //Change the size of the map div back to its original size.
+                    mapContainer.classList.remove('fullScreenMap');
+                    mapContainer.classList.add('standardMap');
+                }
             });
-          } else {
-            alert(
-              "Geocode was not successful for the following reason: " + status
-            );
-          }
-        });
-      }
-    </script>
-  </head>
-  <body>
-    <div id="floating-panel">
-      <input id="address" type="textbox" value="Sydney, NSW" />
-      <input id="submit" type="button" value="Geocode" />
-    </div>
-    <div id="map"></div>
+        } else {
+            document.getElementById('fullScreenToggle').disabled = true;
+        }
 
-    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1t369VuLI_zDJFLBMRVVl7lgmdbGjtCk&callback=initMap&libraries=&v=weekly"
-      async
-    ></script>
-  </body>
+        //Clustering added to map to give us something to look at.
+
+        //Load the Clustering module.
+        Microsoft.Maps.loadModule("Microsoft.Maps.Clustering", function () {
+            //Generate 1,000 random pushpins in the map view. 
+            var pins = Microsoft.Maps.TestDataGenerator.getPushpins(1000, map.getBounds());
+
+            //Create a ClusterLayer and add it to the map.
+            clusterLayer = new Microsoft.Maps.ClusterLayer(pins);
+            map.layers.insert(clusterLayer);
+        });
+    }
+
+    function toggleFullScreen() {
+        var mapContainer = document.getElementById('mapContainer');
+
+        if (isFullScreen()) {
+            //Is fullscreen, exit.
+            var closeFullScreenFn = document.cancelFullScreen
+                        || document.webkitCancelFullScreen
+                        || document.mozCancelFullScreen
+                        || document.msExitFullscreen;
+
+            closeFullScreenFn.call(document);            
+        } else {
+            //Make map full screen.
+            var openFullScreenFn = mapContainer.requestFullScreen
+                        || mapContainer.webkitRequestFullScreen
+                        || mapContainer.mozRequestFullScreen
+                        || mapContainer.msRequestFullscreen;
+
+            openFullScreenFn.call(mapContainer);
+        }
+    }
+
+    function addFullScreenEvent(callback) {
+        var changeEventName;
+
+        if (document.cancelFullScreen) {
+            changeEventName = 'fullscreenchange'
+        } else if (document.webkitCancelFullScreen) {
+            changeEventName = 'webkitfullscreenchange'
+        } else if (document.mozCancelFullScreen) {
+            changeEventName = 'mozfullscreenchange'
+        } else if (document.msExitFullscreen) {
+            changeEventName = 'MSFullscreenChange'
+        } 
+        
+        if (changeEventName) {
+            document.addEventListener(changeEventName, callback);
+        }
+    }
+
+    function isFullScreen() {
+        return !(!document.fullscreenElement &&
+            !document.msFullscreenElement &&
+            !document.mozFullScreenElement &&
+            !document.webkitFullscreenElement);
+    }
+
+    //Determines if fullscreen can be requested of not.
+    function fullScreenEnabled() {
+        return document.fullscreenEnabled ||
+           document.msFullscreenEnabled ||
+           document.mozFullScreenEnabled ||
+           document.webkitFullscreenEnabled;
+    }
+    </script>
+    <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnJFD3gePyycqkvjey6dzoDlmx-xSp6cy54MWj0l86esQPWETcuAHcuGZHxUf_XU' async defer></script>
+    <style>
+        .standardMap {
+            position:relative;
+            width:600px;
+            height:400px;
+        }
+
+        .fullScreenMap {
+            position:relative;
+            width:100%;
+            height:100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="mapContainer" class="standardMap">
+        <div id="myMap"></div>
+
+        <input id="fullScreenToggle" type="button" value="Toggle Full Screen" onclick="toggleFullScreen()" style="position:absolute;top:10px;left:10px;"/>
+    </div>
+
+    <fieldset style="width:800px;margin-top:10px;">
+        <legend>Full Screen Map Sample</legend>
+        This sample shows how to toggle between displying the standard page layout, and a full screen map view. 
+    </fieldset>
+</body>
 </html>
