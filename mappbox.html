@@ -1,128 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
-    <script type='text/javascript'>
-    var map;
-
-    function GetMap()
-    {
-        map = new Microsoft.Maps.Map('#myMap', {});
-
-        if (fullScreenEnabled) {
-            //Use an event to detect when entering/exiting full screen as user may use esc to exit full screen.
-            addFullScreenEvent(function (e) {
-                var mapContainer = document.getElementById('mapContainer');
-
-                if (isFullScreen()) {
-                    //Change the size of the map div so that it fills the screen.
-                    mapContainer.classList.remove('standardMap');
-                    mapContainer.classList.add('fullScreenMap');
-                } else {
-                    //Change the size of the map div back to its original size.
-                    mapContainer.classList.remove('fullScreenMap');
-                    mapContainer.classList.add('standardMap');
-                }
-            });
-        } else {
-            document.getElementById('fullScreenToggle').disabled = true;
-        }
-
-        //Clustering added to map to give us something to look at.
-
-        //Load the Clustering module.
-        Microsoft.Maps.loadModule("Microsoft.Maps.Clustering", function () {
-            //Generate 1,000 random pushpins in the map view. 
-            var pins = Microsoft.Maps.TestDataGenerator.getPushpins(1000, map.getBounds());
-
-            //Create a ClusterLayer and add it to the map.
-            clusterLayer = new Microsoft.Maps.ClusterLayer(pins);
-            map.layers.insert(clusterLayer);
-        });
-    }
-
-    function toggleFullScreen() {
-        var mapContainer = document.getElementById('mapContainer');
-
-        if (isFullScreen()) {
-            //Is fullscreen, exit.
-            var closeFullScreenFn = document.cancelFullScreen
-                        || document.webkitCancelFullScreen
-                        || document.mozCancelFullScreen
-                        || document.msExitFullscreen;
-
-            closeFullScreenFn.call(document);            
-        } else {
-            //Make map full screen.
-            var openFullScreenFn = mapContainer.requestFullScreen
-                        || mapContainer.webkitRequestFullScreen
-                        || mapContainer.mozRequestFullScreen
-                        || mapContainer.msRequestFullscreen;
-
-            openFullScreenFn.call(mapContainer);
-        }
-    }
-
-    function addFullScreenEvent(callback) {
-        var changeEventName;
-
-        if (document.cancelFullScreen) {
-            changeEventName = 'fullscreenchange'
-        } else if (document.webkitCancelFullScreen) {
-            changeEventName = 'webkitfullscreenchange'
-        } else if (document.mozCancelFullScreen) {
-            changeEventName = 'mozfullscreenchange'
-        } else if (document.msExitFullscreen) {
-            changeEventName = 'MSFullscreenChange'
-        } 
-        
-        if (changeEventName) {
-            document.addEventListener(changeEventName, callback);
-        }
-    }
-
-    function isFullScreen() {
-        return !(!document.fullscreenElement &&
-            !document.msFullscreenElement &&
-            !document.mozFullScreenElement &&
-            !document.webkitFullscreenElement);
-    }
-
-    //Determines if fullscreen can be requested of not.
-    function fullScreenEnabled() {
-        return document.fullscreenEnabled ||
-           document.msFullscreenEnabled ||
-           document.mozFullScreenEnabled ||
-           document.webkitFullscreenEnabled;
-    }
-    </script>
-    <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnJFD3gePyycqkvjey6dzoDlmx-xSp6cy54MWj0l86esQPWETcuAHcuGZHxUf_XU' async defer></script>
-    <style>
-        .standardMap {
-            position:relative;
-            width:600px;
-            height:400px;
-        }
-
-        .fullScreenMap {
-            position:relative;
-            width:100%;
-            height:100%;
-        }
-    </style>
+<meta charset="utf-8" />
+<title>Display a map</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
 </head>
 <body>
-    <div id="mapContainer" class="standardMap">
-        <div id="myMap"></div>
+<div id="map"></div>
+<script>
+// TO MAKE THE MAP APPEAR YOU MUST
+// ADD YOUR ACCESS TOKEN FROM
+// https://account.mapbox.com
+mapboxgl.accessToken = 'pk.eyJ1Ijoicmota29zIiwiYSI6ImNqaDBzaXd0ejAwcW4zM3BqeGdiNmo1c2EifQ.2OVuoth6yR28U_KyYj1o7w';
+var map = new mapboxgl.Map({
+container: 'map', // container id
+style: 'mapbox://styles/mapbox/streets-v11', // style URL
+center: [-74.5, 40], // starting position [lng, lat]
+zoom: 9 // starting zoom
+});
+</script>
 
-        <input id="fullScreenToggle" type="button" value="Toggle Full Screen" onclick="toggleFullScreen()" style="position:absolute;top:10px;left:10px;"/>
-    </div>
-
-    <fieldset style="width:800px;margin-top:10px;">
-        <legend>Full Screen Map Sample</legend>
-        This sample shows how to toggle between displying the standard page layout, and a full screen map view. 
-    </fieldset>
 </body>
 </html>
