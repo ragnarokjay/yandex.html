@@ -17,7 +17,7 @@ body { margin: 0; padding: 0; }
 // TO MAKE THE MAP APPEAR YOU MUST
 // ADD YOUR ACCESS TOKEN FROM
 // https://account.mapbox.com
-mapboxgl.accessToken = 'pk.eyJ1IjoicHJpY2VzcGlkZXIiLCJhIjoiY2lldnlyNnpsMHk4cDkxbTNiNzhlcW56bSJ9.QSXBuJDkTaw5dOsZTc5flQ';
+mapboxgl.accessToken = 'pk.eyJ1IjoiZGwtZGV2b3BzLW1hcGJveC1wcm9kIiwiYSI6ImNqcGpmdWN0ejA2ZGUzcm9tNm4zbGtvbGwifQ.yuwz4xt_3kFgv6sy0k8FiA';
 var map = new mapboxgl.Map({
 container: 'map', // container id
 style: 'mapbox://styles/mapbox/streets-v11', // style URL
