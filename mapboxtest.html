@@ -1,16 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Directions Service</title>
+    <title>Street View split-map-panes</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <style type="text/css">
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
-      }
-
-      /* Optional: Makes the sample page fill the window. */
       html,
       body {
         height: 100%;
@@ -18,101 +11,41 @@
         padding: 0;
       }
 
-      #floating-panel {
-        position: absolute;
-        top: 10px;
-        left: 25%;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
-        text-align: center;
-        font-family: "Roboto", "sans-serif";
-        line-height: 30px;
-        padding-left: 10px;
+      #map,
+      #pano {
+        float: left;
+        height: 100%;
+        width: 50%;
       }
     </style>
     <script>
-      function initMap() {
-        const directionsService = new google.maps.DirectionsService();
-        const directionsRenderer = new google.maps.DirectionsRenderer();
+      function initialize() {
+        const fenway = { lat: 42.345573, lng: -71.098326 };
         const map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 7,
-          center: { lat: 41.85, lng: -87.65 },
+          center: fenway,
+          zoom: 14,
         });
-        directionsRenderer.setMap(map);
-
-        const onChangeHandler = function () {
-          calculateAndDisplayRoute(directionsService, directionsRenderer);
-        };
-        document
-          .getElementById("start")
-          .addEventListener("change", onChangeHandler);
-        document
-          .getElementById("end")
-          .addEventListener("change", onChangeHandler);
-      }
-
-      function calculateAndDisplayRoute(directionsService, directionsRenderer) {
-        directionsService.route(
+        const panorama = new google.maps.StreetViewPanorama(
+          document.getElementById("pano"),
           {
-            origin: {
-              query: document.getElementById("start").value,
+            position: fenway,
+            pov: {
+              heading: 34,
+              pitch: 10,
             },
-            destination: {
-              query: document.getElementById("end").value,
-            },
-            travelMode: google.maps.TravelMode.DRIVING,
-          },
-          (response, status) => {
-            if (status === "OK") {
-              directionsRenderer.setDirections(response);
-            } else {
-              window.alert("Directions request failed due to " + status);
-            }
           }
         );
+        map.setStreetView(panorama);
       }
     </script>
   </head>
   <body>
-    <div id="floating-panel">
-      <b>Start: </b>
-      <select id="start">
-        <option value="chicago, il">Chicago</option>
-        <option value="st louis, mo">St Louis</option>
-        <option value="joplin, mo">Joplin, MO</option>
-        <option value="oklahoma city, ok">Oklahoma City</option>
-        <option value="amarillo, tx">Amarillo</option>
-        <option value="gallup, nm">Gallup, NM</option>
-        <option value="flagstaff, az">Flagstaff, AZ</option>
-        <option value="winona, az">Winona</option>
-        <option value="kingman, az">Kingman</option>
-        <option value="barstow, ca">Barstow</option>
-        <option value="san bernardino, ca">San Bernardino</option>
-        <option value="los angeles, ca">Los Angeles</option>
-      </select>
-      <b>End: </b>
-      <select id="end">
-        <option value="chicago, il">Chicago</option>
-        <option value="st louis, mo">St Louis</option>
-        <option value="joplin, mo">Joplin, MO</option>
-        <option value="oklahoma city, ok">Oklahoma City</option>
-        <option value="amarillo, tx">Amarillo</option>
-        <option value="gallup, nm">Gallup, NM</option>
-        <option value="flagstaff, az">Flagstaff, AZ</option>
-        <option value="winona, az">Winona</option>
-        <option value="kingman, az">Kingman</option>
-        <option value="barstow, ca">Barstow</option>
-        <option value="san bernardino, ca">San Bernardino</option>
-        <option value="los angeles, ca">Los Angeles</option>
-      </select>
-    </div>
     <div id="map"></div>
+    <div id="pano"></div>
 
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADkvUMAMHvQRd0zpYuGJaOvP9-YpLhTr0&callback=initMap&libraries=&v=weekly"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXG0KkdD26hvRCIdobF3k710SjCZKURS0&callback=initialize&libraries=&v=weekly"
       async
     ></script>
   </body>
